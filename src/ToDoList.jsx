@@ -8,6 +8,11 @@ function ToDoList() {
   });
   const [newTask, setNewTask] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [statColors] = useState({
+    completed: `hsl(${Math.random() * 360}, 70%, 45%)`,
+    pending: `hsl(${Math.random() * 360}, 70%, 45%)`,
+    percentage: `hsl(${Math.random() * 360}, 70%, 45%)`,
+  });
 
   const tasksPerPage = 5;
 
@@ -57,6 +62,11 @@ function ToDoList() {
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
 
+  const completedTasks = tasks.filter((task) => task.completed).length;
+  const pendingTasks = tasks.length - completedTasks;
+  const completionPercentage =
+    tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+
   function goToNextPage() {
     setCurrentPage((page) => Math.min(page + 1, totalPages));
   }
@@ -70,6 +80,29 @@ function ToDoList() {
   return (
     <div className="to-do-list">
       <h1>TODO LIST</h1>
+      <div className="stats-container">
+        <div
+          className="stat-box"
+          style={{ backgroundColor: statColors.completed }}
+        >
+          <span className="stat-label">Completed</span>
+          <span className="stat-value">{completedTasks}</span>
+        </div>
+        <div
+          className="stat-box"
+          style={{ backgroundColor: statColors.pending }}
+        >
+          <span className="stat-label">Pending</span>
+          <span className="stat-value">{pendingTasks}</span>
+        </div>
+        <div
+          className="stat-box"
+          style={{ backgroundColor: statColors.percentage }}
+        >
+          <span className="stat-label">Completed</span>
+          <span className="stat-value">{completionPercentage}%</span>
+        </div>
+      </div>
       <div>
         <input
           type="text"
