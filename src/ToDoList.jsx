@@ -8,6 +8,8 @@ function ToDoList() {
   });
   const [newTask, setNewTask] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editValue, setEditValue] = useState("");
   const [statColors] = useState({
     completed: `hsl(${Math.random() * 360}, 70%, 45%)`,
     pending: `hsl(${Math.random() * 360}, 70%, 45%)`,
@@ -47,6 +49,31 @@ function ToDoList() {
       i === index ? { ...element, completed: !element.completed } : element
     );
     setTask(updatedTasks);
+  }
+
+  function startEditing(index, text) {
+    setEditingIndex(index);
+    setEditValue(text);
+  }
+
+  function handleEditChange(event) {
+    setEditValue(event.target.value);
+  }
+
+  function saveEdit(index) {
+    if (editValue.trim() !== "") {
+      const updatedTasks = tasks.map((task, i) =>
+        i === index ? { ...task, text: editValue.trim() } : task
+      );
+      setTask(updatedTasks);
+      setEditingIndex(null);
+      setEditValue("");
+    }
+  }
+
+  function cancelEdit() {
+    setEditingIndex(null);
+    setEditValue("");
   }
 
   function clearCompletedTasks() {
@@ -117,21 +144,55 @@ function ToDoList() {
       <ol>
         {currentTasks.map((element, index) => (
           <li key={indexOfFirstTask + index}>
-            <span className={`text ${element.completed ? "completed" : ""}`}>
-              {element.text}
-            </span>
-            <button
-              className="complete-button"
-              onClick={() => toggleComplete(indexOfFirstTask + index)}
-            >
-              {element.completed ? "undo" : "complete"}
-            </button>
-            <button
-              className="delete-button"
-              onClick={() => deleteTask(indexOfFirstTask + index)}
-            >
-              Delete
-            </button>
+            {editingIndex === indexOfFirstTask + index ? (
+              <div className="edit-container">
+                <input
+                  type="text"
+                  value={editValue}
+                  onChange={handleEditChange}
+                  className="edit-input"
+                  autoFocus
+                />
+                <button
+                  className="save-button"
+                  onClick={() => saveEdit(indexOfFirstTask + index)}
+                >
+                  Save
+                </button>
+                <button className="cancel-button" onClick={cancelEdit}>
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <>
+                <span
+                  className={`text ${element.completed ? "completed" : ""}`}
+                >
+                  {element.text}
+                </span>
+                <button
+                  className="edit-button"
+                  onClick={() =>
+                    startEditing(indexOfFirstTask + index, element.text)
+                  }
+                  disabled={element.completed}
+                >
+                  Edit
+                </button>
+                <button
+                  className="complete-button"
+                  onClick={() => toggleComplete(indexOfFirstTask + index)}
+                >
+                  {element.completed ? "Undo" : "Complete"}
+                </button>
+                <button
+                  className="delete-button"
+                  onClick={() => deleteTask(indexOfFirstTask + index)}
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ol>

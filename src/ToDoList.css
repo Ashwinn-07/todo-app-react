@@ -188,6 +188,57 @@
   font-size: 1.5em;
   font-weight: bold;
 }
+.edit-container {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+}
+
+.edit-input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.edit-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button:hover:not(:disabled),
+.save-button:hover,
+.cancel-button:hover {
+  opacity: 0.9;
+}
 
 @media (max-width: 600px) {
   .to-do-list {
