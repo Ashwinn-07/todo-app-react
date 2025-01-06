@@ -10,6 +10,8 @@ function ToDoList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState("");
+  const [error, setError] = useState("");
+  const [editError, setEditError] = useState("");
   const [statColors] = useState({
     completed: `hsl(${Math.random() * 360}, 70%, 45%)`,
     pending: `hsl(${Math.random() * 360}, 70%, 45%)`,
@@ -24,12 +26,24 @@ function ToDoList() {
 
   function handleInputChange(event) {
     setNewTask(event.target.value);
+    setError("");
   }
   function addTask() {
-    if (newTask.trim() !== "") {
-      setTask((t) => [...t, { text: newTask, completed: false }]);
-      setNewTask("");
+    const taskText = newTask.trim();
+    if (taskText === "") {
+      setError("Task cannot be empty");
+      return;
     }
+    const isDuplicate = tasks.some(
+      (task) => task.text.toLowerCase() === taskText.toLowerCase()
+    );
+    if (isDuplicate) {
+      setError("This task already exists");
+      return;
+    }
+    setTask((t) => [...t, { text: taskText, completed: false }]);
+    setNewTask("");
+    setError("");
 
     const newTotalPages = Math.ceil((tasks.length + 1) / tasksPerPage);
     setCurrentPage(newTotalPages);
@@ -58,22 +72,38 @@ function ToDoList() {
 
   function handleEditChange(event) {
     setEditValue(event.target.value);
+    setEditError("");
   }
 
   function saveEdit(index) {
-    if (editValue.trim() !== "") {
-      const updatedTasks = tasks.map((task, i) =>
-        i === index ? { ...task, text: editValue.trim() } : task
-      );
-      setTask(updatedTasks);
-      setEditingIndex(null);
-      setEditValue("");
+    const editedText = editValue.trim();
+
+    if (editedText === "") {
+      setEditError("Task cannot be empty");
+      return;
     }
+    const isDuplicate = tasks.some(
+      (task, i) =>
+        i !== index && task.text.toLowerCase() === editedText.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      setEditError("This task already exists");
+      return;
+    }
+    const updatedTasks = tasks.map((task, i) =>
+      i === index ? { ...task, text: editedText } : task
+    );
+    setTask(updatedTasks);
+    setEditingIndex(null);
+    setEditValue("");
+    setEditError("");
   }
 
   function cancelEdit() {
     setEditingIndex(null);
     setEditValue("");
+    setEditError("");
   }
 
   function clearCompletedTasks() {
@@ -141,6 +171,7 @@ function ToDoList() {
           Add
         </button>
       </div>
+      {error && <div className="error-message">{error}</div>}
       <ol>
         {currentTasks.map((element, index) => (
           <li key={indexOfFirstTask + index}>
@@ -162,6 +193,7 @@ function ToDoList() {
                 <button className="cancel-button" onClick={cancelEdit}>
                   Cancel
                 </button>
+                {editError && <div className="error-message">{editError}</div>}
               </div>
             ) : (
               <>

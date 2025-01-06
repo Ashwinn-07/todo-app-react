@@ -239,6 +239,18 @@
 .cancel-button:hover {
   opacity: 0.9;
 }
+.error-message {
+  color: #dc2626;
+  background-color: #fee2e2;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+.edit-container .error-message {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
 
 @media (max-width: 600px) {
   .to-do-list {
