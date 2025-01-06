@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast, Toaster } from "react-hot-toast";
 import "./ToDoList.css";
 
 function ToDoList() {
@@ -32,6 +33,7 @@ function ToDoList() {
     const taskText = newTask.trim();
     if (taskText === "") {
       setError("Task cannot be empty");
+      toast.error("Task cannot be empty");
       return;
     }
     const isDuplicate = tasks.some(
@@ -39,19 +41,23 @@ function ToDoList() {
     );
     if (isDuplicate) {
       setError("This task already exists");
+      toast.error("This task already exists");
       return;
     }
     setTask((t) => [...t, { text: taskText, completed: false }]);
     setNewTask("");
     setError("");
+    toast.success("Task added successfully");
 
     const newTotalPages = Math.ceil((tasks.length + 1) / tasksPerPage);
     setCurrentPage(newTotalPages);
   }
 
   function deleteTask(index) {
+    const taskText = tasks[index].text;
     const updatedTasks = tasks.filter((element, i) => i !== index);
     setTask(updatedTasks);
+    toast.success(`"${taskText}" deleted successfully`);
 
     const newTotalPages = Math.ceil(updatedTasks.length / tasksPerPage);
     if (currentPage > newTotalPages) {
@@ -62,7 +68,13 @@ function ToDoList() {
     const updatedTasks = tasks.map((element, i) =>
       i === index ? { ...element, completed: !element.completed } : element
     );
+    const task = tasks[index];
     setTask(updatedTasks);
+    toast.success(
+      task.completed
+        ? `"${task.text}" marked as incomplete`
+        : `"${task.text}" completed`
+    );
   }
 
   function startEditing(index, text) {
@@ -80,6 +92,7 @@ function ToDoList() {
 
     if (editedText === "") {
       setEditError("Task cannot be empty");
+      toast.error("Task cannot be empty");
       return;
     }
     const isDuplicate = tasks.some(
@@ -89,6 +102,7 @@ function ToDoList() {
 
     if (isDuplicate) {
       setEditError("This task already exists");
+      toast.error("This task already exists");
       return;
     }
     const updatedTasks = tasks.map((task, i) =>
@@ -98,6 +112,7 @@ function ToDoList() {
     setEditingIndex(null);
     setEditValue("");
     setEditError("");
+    toast.success("Task updated successfully");
   }
 
   function cancelEdit() {
@@ -109,6 +124,7 @@ function ToDoList() {
   function clearCompletedTasks() {
     const updatedTasks = tasks.filter((task) => !task.completed);
     setTask(updatedTasks);
+    toast.success("Removed all completed tasks");
     const newTotalPages = Math.ceil(updatedTasks.length / tasksPerPage);
     if (currentPage > newTotalPages) {
       setCurrentPage(newTotalPages || 1);
@@ -136,6 +152,28 @@ function ToDoList() {
 
   return (
     <div className="to-do-list">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: "#fff",
+            color: "#363636",
+          },
+          success: {
+            style: {
+              background: "#4CAF50",
+              color: "#fff",
+            },
+          },
+          error: {
+            style: {
+              background: "#f44336",
+              color: "#fff",
+            },
+          },
+        }}
+      />
       <h1>TODO LIST</h1>
       <div className="stats-container">
         <div
